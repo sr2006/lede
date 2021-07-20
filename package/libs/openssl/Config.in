@@ -38,7 +38,7 @@ config OPENSSL_WITH_ASM
 
 config OPENSSL_WITH_SSE2
 	bool
-	default y if !TARGET_x86_legacy && !TARGET_x86_geode
+	default y if x86_64 || i386 && !TARGET_x86_legacy
 	prompt "Enable use of x86 SSE2 instructions"
 	depends on OPENSSL_WITH_ASM && x86_64 || i386
 	help
@@ -138,7 +138,7 @@ config OPENSSL_WITH_CHACHA_POLY1305
 
 config OPENSSL_PREFER_CHACHA_OVER_GCM
 	bool
-	default y if !x86_64 && !aarch64
+	default y if !x86_64
 	prompt "Prefer ChaCha20-Poly1305 over AES-GCM by default"
 	depends on OPENSSL_WITH_CHACHA_POLY1305
 	help
@@ -248,6 +248,7 @@ config OPENSSL_ENGINE
 
 config OPENSSL_ENGINE_BUILTIN
 	bool "Build chosen engines into libcrypto"
+	default y
 	depends on OPENSSL_ENGINE
 	help
 		This builds all chosen engines into libcrypto.so, instead of building
@@ -257,6 +258,7 @@ config OPENSSL_ENGINE_BUILTIN
 
 config OPENSSL_ENGINE_BUILTIN_AFALG
 	bool
+	default y
 	prompt "Acceleration support through AF_ALG sockets engine"
 	depends on OPENSSL_ENGINE_BUILTIN && KERNEL_AIO
 	select PACKAGE_libopenssl-conf
@@ -294,16 +296,5 @@ config OPENSSL_WITH_ASYNC
 		Enables async-aware applications to be able to use OpenSSL to
 		initiate crypto operations asynchronously. In order to work
 		this will require the presence of an async capable engine.
-
-config OPENSSL_WITH_GOST
-	bool
-	prompt "Prepare library for GOST engine"
-	depends on OPENSSL_ENGINE
-	help
-		This option prepares the library to accept engine support
-		for Russian GOST crypto algorithms.
-		The gost engine is not included in standard openwrt feeds.
-		To build such engine yourself, see:
-		https://github.com/gost-engine/engine
 
 endif
